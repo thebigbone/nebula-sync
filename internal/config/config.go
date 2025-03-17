@@ -4,8 +4,6 @@ import (
 	"crypto/tls"
 	"fmt"
 	"net/http"
-	"os"
-	"strconv"
 	"time"
 
 	"github.com/joho/godotenv"
@@ -125,20 +123,11 @@ func (c *Config) String() string {
 	return fmt.Sprintf("primary=%s, replicas=%s, fullSync=%t, cron=%s, sync=%s", c.Primary.Url, replicas, c.Sync.FullSync, cron, sync)
 }
 
-func (cs *Client) NewHttpClient() *http.Client {
-	defaultTimeout := 20 * time.Second
-
-	timeoutEnv := os.Getenv("HTTP_CLIENT_TIMEOUT")
-	if timeoutEnv != "" {
-		if timeout, err := strconv.Atoi(timeoutEnv); err == nil {
-			defaultTimeout = time.Duration(timeout) * time.Second
-		}
-	}
-
+func (settings *Client) NewHttpClient() *http.Client {
 	return &http.Client{
-		Timeout: defaultTimeout,
+		Timeout: time.Duration(settings.Timeout) * time.Second,
 		Transport: &http.Transport{
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: cs.SkipSSLVerification},
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: settings.SkipSSLVerification},
 		},
 	}
 }
