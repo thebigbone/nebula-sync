@@ -3,6 +3,11 @@ package config
 import (
 	"crypto/tls"
 	"fmt"
+	"net/http"
+	"os"
+	"strconv"
+	"time"
+
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/lovelaze/nebula-sync/internal/pihole/model"
@@ -19,6 +24,7 @@ type Config struct {
 type Client struct {
 	SkipSSLVerification bool  `default:"false" envconfig:"CLIENT_SKIP_TLS_VERIFICATION"`
 	RetryDelay          int64 `default:"1" envconfig:"CLIENT_RETRY_DELAY_SECONDS"`
+	Timeout             uint  `default:"20" envconfig:"CLIENT_TIMEOUT_SECONDS"`
 }
 
 type GravitySettings struct {
